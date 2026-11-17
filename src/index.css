@@ -1,0 +1,263 @@
+/* ===== Base ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --fondo: #f6f1e9;
+  --papel: #fffdf9;
+  --texto: #2b2622;
+  --suave: #6b625a;
+  --borde: #d9cfc2;
+  --acento: #7a2e2e;
+  --acento-oscuro: #5c2020;
+  --error: #b42318;
+  --ok: #1e6b3a;
+  --aviso: #8a5a00;
+
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--texto);
+  background: var(--fondo);
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+h1,
+h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: normal;
+  margin: 0 0 0.5rem;
+}
+
+h1 {
+  font-size: 2.2rem;
+  color: var(--acento);
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+/* ===== Cabecera ===== */
+header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+header p {
+  margin: 0;
+  color: var(--suave);
+}
+
+/* ===== Distribución: formulario y lista lado a lado ===== */
+main {
+  display: grid;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 800px) {
+  main {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ===== Tarjetas ===== */
+form,
+section {
+  background: var(--papel);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+/* ===== Formulario ===== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+form > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="date"],
+input[type="number"],
+textarea {
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--texto);
+}
+
+textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+fieldset {
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin: 0;
+}
+
+legend {
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0 0.3rem;
+}
+
+label:has(> input[type="radio"]),
+label:has(> input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: normal;
+  margin: 0.3rem 0;
+  cursor: pointer;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  accent-color: var(--acento);
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+/* Campo con error: se activa solo cuando pongas aria-invalid */
+[aria-invalid="true"] {
+  border-color: var(--error);
+  background: #fff5f4;
+}
+
+/* Foco visible para quien navega con teclado */
+:focus-visible {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
+}
+
+/* ===== Botones ===== */
+button {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.65rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--acento);
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--acento-oscuro);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.boton-secundario {
+  background: transparent;
+  color: var(--acento);
+  border: 1px solid var(--acento);
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.boton-secundario:hover:not(:disabled) {
+  background: #f3e6e6;
+}
+
+/* ===== Mensajes ===== */
+.error {
+  color: var(--error);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.ok,
+.aviso,
+.error-general {
+  padding: 0.7rem 0.9rem;
+  border-radius: 6px;
+  margin: 0;
+}
+
+.ok {
+  background: #e8f4ec;
+  color: var(--ok);
+  border: 1px solid #b7dcc4;
+}
+
+.aviso {
+  background: #fdf3dc;
+  color: var(--aviso);
+  border: 1px solid #ecd49a;
+}
+
+.error-general {
+  background: #fdecea;
+  color: var(--error);
+  border: 1px solid #f3c1bc;
+}
+
+.cargando {
+  color: var(--suave);
+  font-style: italic;
+  margin: 0;
+}
+
+.precio {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* ===== Lista de reservas ===== */
+section ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+section li {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-left: 4px solid var(--acento);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+
+section li p {
+  margin: 0.15rem 0;
+  color: var(--suave);
+  font-size: 0.9rem;
+}
