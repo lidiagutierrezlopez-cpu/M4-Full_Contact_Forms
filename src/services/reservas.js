@@ -42,3 +42,10 @@ export async function crearReserva(nueva) {
 
     return respuesta.json();
 }
+
+export async function borrarReserva(id) {
+    const respuesta = await fetch(`${API_URL}/reservas/${id}`, { method: "DELETE" });
+    if(!respuesta.ok) {
+        throw new Error("No se pudo cancelar la reserva");
+    }
+}

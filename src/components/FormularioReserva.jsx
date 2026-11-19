@@ -4,9 +4,10 @@ import { esquemaReserva } from "../schemas/reserva";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { crearReserva } from "../services/reservas";
 
+const PRECIOS = { general: 12, reducida: 6, grupo: 8 };
 
 export default function FormularioReserva() {
-    const { register, reset, handleSubmit, formState: { errors } } = useForm({
+    const { register, reset, handleSubmit, formState: { errors }, watch } = useForm({
         resolver: zodResolver(esquemaReserva),
         defaultValues: {
             nombre: "",
@@ -19,6 +20,10 @@ export default function FormularioReserva() {
             normas: false,
         },
     });
+
+    const tipo = watch("tipo");
+    const entradas = watch("entradas");
+    const total = (Number(entradas) || 0) * PRECIOS[tipo];
 
     const queryClient = useQueryClient();
 
@@ -160,6 +165,10 @@ export default function FormularioReserva() {
                 </label>
                 {errors.normas && <p id="error-normas" role="alert" className="error">{errors.normas.message}</p>}
             </div>
+
+            <p className="precio" aria-live="polite">
+                Total: {total.toLocaleString("es-ES", { style: "currency", currency: "EUR" })}
+            </p>
 
             <button type="submit" disabled={mutacion.isPending}>
                 {mutacion.isPending ? "Reservando…" : "Reservar"}

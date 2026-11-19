@@ -1,11 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { obtenerReservas } from "../services/reservas";
-
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { obtenerReservas, borrarReserva } from "../services/reservas";
 
 export default function ListaReservas() {
     const { data, isPending, isError, error, isFetching, refetch } = useQuery({
         queryKey: ["reservas"],
         queryFn: obtenerReservas,
+    });
+
+    const queryClient = useQueryClient();
+
+    const cancelar = useMutation({
+        mutationFn: borrarReserva,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["reservas"]});
+        },
     });
 
     if (isPending) {
@@ -33,12 +41,22 @@ export default function ListaReservas() {
                     Reservas descartadas por datos incorrectos: {data.descartadas}
                 </p>
             )}
+            {cancelar.isError && <p role="alert" className="error-general">No se ha podido cancelar la reserva.</p>}
             <ul>
                 {data.reservas.map((reserva) => (
                     <li key={reserva.id}>
                         <strong>{reserva.nombre}</strong>
                         <p>{reserva.fecha} · {reserva.entradas} entradas · {reserva.tipo}</p>
                         <p>{reserva.exposiciones.join(", ")}</p>
+                        <button
+                            type="button"
+                            className="boton-secundario"
+                            aria-label={`Cancelar la reserva de ${reserva.nombre}`}
+                            disabled={cancelar.isPending && cancelar.variables === reserva.id}
+                            onClick={() => cancelar.mutate(reserva.id)}
+                        >
+                            {cancelar.isPending && cancelar.variables === reserva.id ? "Cancelando..." : "Cancelar"}
+                        </button>
                     </li>
                 ))}
             </ul>
