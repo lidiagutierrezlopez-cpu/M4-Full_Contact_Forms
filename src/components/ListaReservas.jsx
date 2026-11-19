@@ -21,15 +21,20 @@ export default function ListaReservas() {
         );
     }
 
-    if (data.length === 0) {
+    if (data.reservas.length === 0 && data.descartadas === 0) {
         return <p>Aún no hay reservas.</p>;
     }
 
     return (
         <>
             {isFetching && <p className="cargando">Actualizando...</p>}
+            {data.descartadas > 0 && (
+                <p role="status" className="aviso">
+                    Reservas descartadas por datos incorrectos: {data.descartadas}
+                </p>
+            )}
             <ul>
-                {data.map((reserva) => (
+                {data.reservas.map((reserva) => (
                     <li key={reserva.id}>
                         <strong>{reserva.nombre}</strong>
                         <p>{reserva.fecha} · {reserva.entradas} entradas · {reserva.tipo}</p>

@@ -34,4 +34,16 @@ export const esquemaReserva = z
     .refine((datos) => datos.tipo !== "grupo" || datos.entradas >=5, {
         error: "Las reservas de grupo son de 5 entradas o más",
         path: ["entradas"],
-    });
+});
+
+export const esquemaReservaApi = z.object({
+    id: z.string(),
+    nombre: z.string(),
+    email: z.email(),
+    fecha: z.string(),
+    entradas: z.number().int().min(1),
+    tipo: z.enum(["general", "reducida", "grupo"]),
+    exposiciones: z.array(z.string()),
+    comentario: z.string(),
+    normas: z.boolean(), 
+});
