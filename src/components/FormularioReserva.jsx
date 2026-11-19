@@ -3,8 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { esquemaReserva } from "../schemas/reserva";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { crearReserva } from "../services/reservas";
-
-const PRECIOS = { general: 12, reducida: 6, grupo: 8 };
+import { PRECIOS } from "../datos/museo";
 
 export default function FormularioReserva() {
     const { register, reset, handleSubmit, formState: { errors }, watch } = useForm({
