@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { obtenerReservas, borrarReserva } from "../services/reservas";
+import { obtenerReservasDe, borrarReserva } from "../services/reservas";
+import { nombreExposicion } from "../datos/museo";
 
-export default function ListaReservas() {
+export default function ListaReservas({ nombre }) {
     const { data, isPending, isError, error, isFetching, refetch } = useQuery({
-        queryKey: ["reservas"],
-        queryFn: obtenerReservas,
+        queryKey: ["reservas", nombre],
+        queryFn: () => obtenerReservasDe(nombre),
+        enable: !!nombre,
     });
 
     const queryClient = useQueryClient();
@@ -30,7 +32,7 @@ export default function ListaReservas() {
     }
 
     if (data.reservas.length === 0 && data.descartadas === 0) {
-        return <p>Aún no hay reservas.</p>;
+        return <p>No hay reservas a nombre de {nombre}.</p>;
     }
 
     return (
@@ -47,7 +49,7 @@ export default function ListaReservas() {
                     <li key={reserva.id}>
                         <strong>{reserva.nombre}</strong>
                         <p>{reserva.fecha} · {reserva.entradas} entradas · {reserva.tipo}</p>
-                        <p>{reserva.exposiciones.join(", ")}</p>
+                        <p>{reserva.exposiciones.map(nombreExposicion).join(", ")}</p>
                         <button
                             type="button"
                             className="boton-secundario"

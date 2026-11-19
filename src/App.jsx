@@ -1,5 +1,5 @@
 import FormularioReserva from "./components/FormularioReserva.jsx";
-import ListaReservas from "./components/ListaReservas.jsx";
+import MisReservas from "./components/MisReservas.jsx";
 
 export default function App() {
     return (
@@ -12,8 +12,8 @@ export default function App() {
             <main>
                 <FormularioReserva />
                 <section>
-                    <h2>Reservas</h2>
-                    <ListaReservas />
+                    <h2>Mis reservas</h2>
+                    <MisReservas />
                 </section>
             </main>
         </>
