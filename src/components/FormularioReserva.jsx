@@ -1,4 +1,5 @@
 import { useForm, useWatch } from "react-hook-form";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { esquemaReserva } from "../schemas/reserva";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,6 +9,12 @@ import VentanaConfirmacion from "./VentanaConfirmacion";
 import { exposicionMasPopular } from "../utils/popularidad";
 
 export default function FormularioReserva() {
+    const [infoAbierta, setInfoAbierta] = useState(null);
+
+    function alternarInfo(id) {
+        setInfoAbierta(infoAbierta === id ? null : id);
+    }
+
     const { register, reset, handleSubmit, formState: { errors }, control } = useForm({
         resolver: zodResolver(esquemaReserva),
         defaultValues: {
@@ -135,6 +142,22 @@ export default function FormularioReserva() {
                                     </span>
                                 )}
                             </label>
+                            <button
+                                type="button"
+                                className="boton-info"
+                                aria-expanded={infoAbierta === expo.id}
+                                aria-controls={`info-${expo.id}`}
+                                onClick={() => alternarInfo(expo.id)}
+                            >
+                                {infoAbierta === expo.id ? "Menos info" : "Más info"}
+                                <span className="sr-only"> sobre {expo.nombre}</span>
+                            </button>
+
+                            <p id={`info-${expo.id}`} className="info-expo" hidden={infoAbierta !== expo.id}>
+                                {expo.descripcion}
+                                <span>{expo.sala}</span>
+                            </p>
+                                                  
                         </div>
                     ))}
                     {errors.exposiciones && <p id="error-exposiciones" role="alert" className="error">{errors.exposiciones.message}</p>}

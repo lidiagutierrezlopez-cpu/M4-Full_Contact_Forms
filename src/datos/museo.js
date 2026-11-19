@@ -5,19 +5,19 @@ export const EXPOSICIONES = [
         id: "impresionismo",
         nombre: "Impresionismo",
         sala: "Sala 1",
-        descripcion: "Una descripción corta de la exposición.",
+        descripcion: "Paisajes, luz y pinceladas sueltas de finales del siglo XIX. Obras que intentan captar un instante tal y como se veía.",
     },
     {
         id: "escultura",
         nombre: "Escultura",
         sala: "Sala 2",
-        descripcion: "Una descripción corta de la exposición.",
+        descripcion: "Piezas en mármol, bronce y madera, desde la Antigüedad hasta hoy. Un recorrido por cómo ha cambiado la forma de representar el cuerpo.",
     },
     {
         id: "renacimiento",
         nombre: "Renacimiento",
         sala: "Sala 3",
-        descripcion: "Una descripción corta de la exposición.",
+        descripcion: "Pintura italiana y flamenca de los siglos XV y XVI. Retratos, escenas religiosas y los primeros grandes estudios de perspectiva.",
     },
 ];
 

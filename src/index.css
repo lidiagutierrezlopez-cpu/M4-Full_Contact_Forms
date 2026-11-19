@@ -335,3 +335,44 @@ section form {
   font-size: 0.8rem;
   font-weight: 600;
 }
+
+.boton-info {
+  background: transparent;
+  color: var(--acento);
+  padding: 0.1rem 0.4rem;
+  font-size: 0.85rem;
+  text-decoration: underline;
+}
+
+.boton-info:hover:not(:disabled) {
+  background: #f3e6e6;
+}
+
+.info-expo {
+  flex-basis: 100%;
+  margin: 0 0 0.5rem 1.55rem;
+  padding: 0.6rem 0.8rem;
+  border-left: 3px solid var(--borde);
+  background: var(--fondo);
+  color: var(--suave);
+  font-size: 0.9rem;
+}
+
+.info-expo span {
+  display: block;
+  margin-top: 0.25rem;
+  font-weight: 600;
+}
+
+/* Texto solo para lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
