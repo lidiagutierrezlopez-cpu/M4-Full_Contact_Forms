@@ -7,3 +7,17 @@ export async function obtenerReservas() {
     }
     return respuesta.json();
 }
+
+export async function crearReserva(nueva) {
+    const respuesta = await fetch(`${API_URL}/reservas`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nueva),
+    });
+
+    if (!respuesta.ok) {
+        throw new Error("No se pudo guardar la reserva");
+    }
+    
+    return respuesta.json();
+}

@@ -7,9 +7,28 @@
       "fecha": "2026-12-04",
       "entradas": 2,
       "tipo": "general",
-      "exposiciones": ["impresionismo", "escultura"],
+      "exposiciones": [
+        "impresionismo",
+        "escultura"
+      ],
       "comentario": "",
       "normas": true
+    },
+    {
+      "nombre": "lidia",
+      "email": "lidia@gmail.com",
+      "fecha": "2026-12-04",
+      "entradas": 3,
+      "tipo": "reducida",
+      "exposiciones": [
+        "impresionismo",
+        "escultura",
+        "renacimiento"
+      ],
+      "comentario": "hola",
+      "normas": true,
+      "id": "qbBPvxyQdwc"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

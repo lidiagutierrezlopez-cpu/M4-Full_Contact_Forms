@@ -1,10 +1,12 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { esquemaReserva } from "../schemas/reserva";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { crearReserva } from "../services/reservas";
 
 
 export default function FormularioReserva() {
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, reset, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(esquemaReserva),
         defaultValues: {
             nombre: "",
@@ -18,8 +20,18 @@ export default function FormularioReserva() {
         },
     });
 
+    const queryClient = useQueryClient();
+
+    const mutacion = useMutation({
+        mutationFn: crearReserva,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["reservas"] });
+            reset();
+        },
+    });
+
     function onSubmit(datos) {
-        console.log(datos);
+        mutacion.mutate(datos);
     }
 
     return (
@@ -149,7 +161,13 @@ export default function FormularioReserva() {
                 {errors.normas && <p id="error-normas" role="alert" className="error">{errors.normas.message}</p>}
             </div>
 
-            <button type="submit">Reservar</button>
+            <button type="submit" disabled={mutacion.isPending}>
+                {mutacion.isPending ? "Reservando…" : "Reservar"}
+            </button>
+            {mutacion.isSuccess 
+                && (<p role="status" className="ok">¡Reserva confirmada! Te esperamos en el museo.</p>)}
+            {mutacion.isError
+                && (<p role="alert" className="error-general">No se ha podido guardar la reserva. Inténtalo de nuevo.</p>)}
         </form>
     );
 }
