@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+
 function noEsPasada(texto) {
     const dia = new Date(texto + "T00:00");
     const hoy = new Date();

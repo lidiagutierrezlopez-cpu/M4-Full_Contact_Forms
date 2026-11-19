@@ -1,3 +1,15 @@
 {
-  "reservas": []
+  "reservas": [
+    {
+      "id": "1",
+      "nombre": "Ana García",
+      "email": "ana@ejemplo.com",
+      "fecha": "2026-12-04",
+      "entradas": 2,
+      "tipo": "general",
+      "exposiciones": ["impresionismo", "escultura"],
+      "comentario": "",
+      "normas": true
+    }
+  ]
 }
