@@ -26,24 +26,52 @@ export default function FormularioReserva() {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div>
                 <label htmlFor="nombre">Nombre</label>
-                <input id="nombre" type="text" autoComplete="name" {...register("nombre")} />
-                {errors.nombre && <p className="error">{errors.nombre.message}</p>}
+                <input 
+                    id="nombre" 
+                    type="text" 
+                    autoComplete="name" 
+                    aria-invalid={!!errors.nombre} 
+                    aria-describedby={errors.nombre ? "error-nombre" : undefined} 
+                    {...register("nombre")}
+                />
+                {errors.nombre && <p id="error-nombre" role="alert" className="error">{errors.nombre.message}</p>}
             </div>
             <div>
                 <label htmlFor="email">Email</label>
-                <input id="email" type="email" autoComplete="email" {...register("email")} />
-                {errors.email && <p className="error">{errors.email.message}</p>}
+                <input 
+                    id="email" 
+                    type="email" 
+                    autoComplete="email" 
+                    aria-invalid={!!errors.email} 
+                    aria-describedby={errors.email ? "error-email" : undefined} 
+                    {...register("email")}
+                />
+                {errors.email && <p id="error-email" role="alert" className="error">{errors.email.message}</p>}
             </div>
 
             <div>
                 <label htmlFor="fecha">Fecha</label>
-                <input id="fecha" type="date" {...register("fecha")} />
-                {errors.fecha && <p className="error">{errors.fecha.message}</p>}
+                <input 
+                    id="fecha" 
+                    type="date" 
+                    aria-invalid={!!errors.fecha} 
+                    aria-describedby={errors.fecha ? "error-fecha" : undefined} 
+                    {...register("fecha")}
+                />
+                {errors.fecha && <p id="error-fecha" role="alert" className="error">{errors.fecha.message}</p>}
             </div>
             <div>
                 <label htmlFor="entradas">Entradas</label>
-                <input id="entradas" type="number" min="1" max="10" {...register("entradas")} />
-                {errors.entradas && <p className="error">{errors.entradas.message}</p>}
+                <input 
+                    id="entradas" 
+                    type="number" 
+                    min="1"
+                    max="10"
+                    aria-invalid={!!errors.entradas} 
+                    aria-describedby={errors.entradas ? "error-entradas" : undefined} 
+                    {...register("entradas")}
+                />
+                {errors.entradas && <p id="error-entradas" role="alert" className="error">{errors.entradas.message}</p>}
             </div>
 
             <fieldset>
@@ -65,32 +93,60 @@ export default function FormularioReserva() {
             <fieldset>
                 <legend>Exposiciones que quieres ver</legend>
                 <label>
-                    <input type="checkbox" value="impresionismo" {...register("exposiciones")} />
+                    <input
+                        type="checkbox"
+                        value="impresionismo"
+                        aria-invalid={!!errors.exposiciones}
+                        aria-describedby={errors.exposiciones ? "error-exposiciones" : undefined}
+                        {...register("exposiciones")}
+                    />
                     Impresionismo
                 </label>
                 <label>
-                    <input type="checkbox" value="escultura" {...register("exposiciones")} />
+                    <input
+                        type="checkbox"
+                        value="escultura"
+                        aria-invalid={!!errors.exposiciones}
+                        aria-describedby={errors.exposiciones ? "error-exposiciones" : undefined}
+                        {...register("exposiciones")}
+                    />
                     Escultura
                 </label>
                 <label>
-                    <input type="checkbox" value="renacimiento" {...register("exposiciones")} />
+                    <input
+                        type="checkbox"
+                        value="renacimiento"
+                        aria-invalid={!!errors.exposiciones}
+                        aria-describedby={errors.exposiciones ? "error-exposiciones" : undefined}
+                        {...register("exposiciones")}
+                    />
                     Renacimiento
                 </label>
-                {errors.exposiciones && <p className="error">{errors.exposiciones.message}</p>}
+                {errors.exposiciones && <p id="error-exposiciones" role="alert" className="error">{errors.exposiciones.message}</p>}
             </fieldset>
             
             <div>
                 <label htmlFor="comentario">Comentario (opcional)</label>
-                <textarea id="comentario" {...register("comentario")} />
-                {errors.comentario && <p className="error">{errors.comentario.message}</p>}
+                <textarea 
+                    id="comentario" 
+                    aria-invalid={!!errors.comentario} 
+                    aria-describedby={errors.comentario ? "error-comentario" : undefined} 
+                    {...register("comentario")}
+                />
+                {errors.comentario && <p id="error-comentario" role="alert" className="error">{errors.comentario.message}</p>}
             </div>
 
             <div>
                 <label>
-                    <input type="checkbox" {...register("normas")} />
+                    <input 
+                        type="checkbox" 
+                        aria-invalid={!!errors.normas} 
+                        aria-describedby={errors.normas ? "error-normas" : undefined} 
+                        {...register("normas")}
+                    />
                     Acepto las normas del museo
                 </label>
-                {errors.normas && <p className="error">{errors.normas.message}</p>}
+                {errors.normas && <p id="error-normas" role="alert" className="error">{errors.normas.message}</p>}
             </div>
 
             <button type="submit">Reservar</button>
