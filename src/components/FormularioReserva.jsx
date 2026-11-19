@@ -1,10 +1,11 @@
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { esquemaReserva } from "../schemas/reserva";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { crearReserva } from "../services/reservas";
-import { PRECIOS } from "../datos/museo";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { crearReserva, obtenerReservas } from "../services/reservas";
+import { EXPOSICIONES, PRECIOS } from "../datos/museo";
 import VentanaConfirmacion from "./VentanaConfirmacion";
+import { exposicionMasPopular } from "../utils/popularidad";
 
 export default function FormularioReserva() {
     const { register, reset, handleSubmit, formState: { errors }, control } = useForm({
@@ -35,6 +36,13 @@ export default function FormularioReserva() {
         },
     });
 
+    const { data: todas } = useQuery({
+        queryKey: ["reservas"],
+        queryFn: obtenerReservas,
+    });
+
+    const popular = todas ? exposicionMasPopular(todas.reservas) : null;
+    
     function onSubmit(datos) {
         mutacion.mutate(datos);
     }
@@ -110,36 +118,25 @@ export default function FormularioReserva() {
 
                 <fieldset>
                     <legend>Exposiciones que quieres ver</legend>
-                    <label>
-                        <input
-                            type="checkbox"
-                            value="impresionismo"
-                            aria-invalid={!!errors.exposiciones}
-                            aria-describedby={errors.exposiciones ? "error-exposiciones" : undefined}
-                            {...register("exposiciones")}
-                        />
-                        Impresionismo
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            value="escultura"
-                            aria-invalid={!!errors.exposiciones}
-                            aria-describedby={errors.exposiciones ? "error-exposiciones" : undefined}
-                            {...register("exposiciones")}
-                        />
-                        Escultura
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            value="renacimiento"
-                            aria-invalid={!!errors.exposiciones}
-                            aria-describedby={errors.exposiciones ? "error-exposiciones" : undefined}
-                            {...register("exposiciones")}
-                        />
-                        Renacimiento
-                    </label>
+                    {EXPOSICIONES.map((expo) => (
+                        <div key={expo.id} className="exposicion">
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    value={expo.id}
+                                    aria-invalid={!!errors.exposiciones}
+                                    aria-describedby={errors.exposiciones ? "error-exposiciones" : undefined}
+                                    {...register("exposiciones")}
+                                />
+                                {expo.nombre}
+                                {popular === expo.id && (
+                                    <span className="popular">
+                                        <span aria-hidden="true">★ </span>La más popular
+                                    </span>
+                                )}
+                            </label>
+                        </div>
+                    ))}
                     {errors.exposiciones && <p id="error-exposiciones" role="alert" className="error">{errors.exposiciones.message}</p>}
                 </fieldset>
                 

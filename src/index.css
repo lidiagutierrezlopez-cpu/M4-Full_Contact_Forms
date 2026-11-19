@@ -317,3 +317,21 @@ section form {
 .cabecera-lista p {
   margin: 0;
 }
+
+/* ===== Exposiciones ===== */
+.exposicion {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+}
+
+.popular {
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: #f3e6e6;
+  color: var(--acento);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
