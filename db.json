@@ -24,6 +24,21 @@
       "exposiciones": "impresionismo",
       "comentario": "",
       "normas": true
+    },
+    {
+      "nombre": "lidia",
+      "email": "lidia@gmail.com",
+      "fecha": "2026-11-27",
+      "entradas": 6,
+      "tipo": "reducida",
+      "exposiciones": [
+        "impresionismo",
+        "escultura",
+        "renacimiento"
+      ],
+      "comentario": "hola",
+      "normas": true,
+      "id": "R0wNAaSLDoQ"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
