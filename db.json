@@ -39,5 +39,5 @@
             "id": "Ewok8BWcEK8"
         }
     ],
-    "$schema": "./node_modules/json-server/schema.json"
+    "$schema": ["./node_modules/json-server/schema.json"]
 }

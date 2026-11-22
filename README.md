@@ -1,17 +1,21 @@
 # Museo U-Tad
 
+Misión M4 "Full Contact Forms" de Desarrollo Web I. Aplicación React para reservar visitas a un museo, con un formulario validado con React Hook Form y Zod, y datos remotos gestionados con TanStack Query contra una API local de json-server.
+
 ## Formulario y validación
 
 El formulario recoge nombre, email, fecha de la visita, número de entradas, tipo de entrada, exposiciones, un comentario opcional y la aceptación de las normas del museo.
 
 - El nombre debe tener al menos 2 caracteres.
 - El email debe tener un formato válido.
-- La fecha no puede ser pasada ni caer en lunes, que es el día de cierre del museo.
+- La fecha se valida con un único `superRefine`, que comprueba en orden que se haya elegido una fecha, que sea una fecha válida, que no sea pasada y que no caiga en lunes, que es el día de cierre del museo. Se detiene en el primer fallo, así que siempre se muestra el mensaje adecuado.
 - Las entradas son un número entero entre 1 y 10. Se usa `z.coerce.number()` porque los inputs siempre devuelven texto.
-- Hay que elegir al menos una exposición.
+- Hay que elegir un tipo de entrada y al menos una exposición.
 - El comentario admite un máximo de 200 caracteres.
 - Hay que aceptar las normas del museo.
 - Validación cruzada: las reservas de grupo necesitan 5 entradas o más. El error se asigna al campo de entradas con `path`, y los radios del tipo declaran `deps: ["entradas"]` para que el error se recalcule al cambiar de tipo.
+
+Los campos que comparten el formulario y la API están en un esquema base, `camposComunes`. Tanto `esquemaReserva` como `esquemaReservaApi` se crean a partir de él con `.extend()`, de modo que las reglas comunes solo están escritas una vez.
 
 
 
@@ -47,6 +51,8 @@ Tras cada mutación se ejecuta `invalidateQueries({ queryKey: ["reservas"] })`. 
 
 La interfaz muestra en cada momento qué está pasando: "Cargando reservas…", error con botón de reintentar, lista vacía, "Actualizando…" durante el refresco en segundo plano, "Reservando…" y "Cancelando…" en los botones, y mensajes de error si falla un envío.
 
+
+
 ## Extras
 
 - Precio total en vivo, que se calcula según el tipo y el número de entradas. Usa `useWatch` en lugar de `watch()`, porque `watch()` no es compatible con el React Compiler.
@@ -55,19 +61,28 @@ La interfaz muestra en cada momento qué está pasando: "Cargando reservas…", 
 - Etiqueta "La más popular" en la exposición con más entradas reservadas, que se actualiza al reservar o cancelar.
 - Botón de más información en cada exposición, con su descripción y su sala.
 - Las exposiciones se generan desde `datos/museo.js`, así que añadir una nueva solo requiere tocar ese archivo.
+- Tests automáticos de los esquemas con Vitest
+
+
 
 ## Bonus: validación de la respuesta del API
 
 Las reservas que devuelve la API se validan con un segundo esquema, `esquemaReservaApi`, usando `safeParse` reserva por reserva. Las válidas se muestran y las incorrectas se descartan, con un aviso en pantalla y el detalle del fallo en la consola (`console.warn`).
 
-Es un esquema distinto al del formulario por tres motivos:
+Comparte los campos comunes con el esquema del formulario, pero cambia tres cosas:
 
-- No rechaza fechas pasadas, porque una reserva antigua sigue siendo válida.
-- No usa `coerce`, porque las entradas deben llegar como número y no como texto.
+- La fecha no se compara con hoy, porque una reserva antigua sigue siendo válida.
+- Las entradas no usan `coerce`, porque deben llegar como número y no como texto.
 - Incluye el `id`, que solo existe en los datos del servidor.
 
 Se usa `safeParse` en lugar de `parse` porque `parse` lanza un error y una sola reserva incorrecta haría fallar el listado entero.
 
+### Cómo comprobarlo
+
+`db.json` incluye a propósito una reserva con `id` "corrupta" que tiene cuatro fallos: un email no válido, las entradas como texto, un tipo de entrada que no existe y las exposiciones sin formato de lista.
+
+- En la aplicación: entra en "Mis reservas" con el nombre "Reserva rota". Aparece el aviso "Reservas descartadas por datos incorrectos: 1" y en la consola se ve qué campos han fallado.
+- Con los tests: `npm test` ejecuta `src/schemas/reserva.test.js`, que comprueba que `esquemaReservaApi` acepta una reserva correcta y rechaza la corrupta en esos cuatro campos. También comprueba las reglas del formulario: los lunes, las fechas no válidas y el mínimo de entradas en grupo.
 
 
 ## Problemas y decisiones
@@ -94,4 +109,4 @@ He utilizado Claude como asistente durante el desarrollo de esta práctica, de l
 - Para que me explicara los conceptos que iba necesitando (React Hook Form, Zod, TanStack Query, accesibilidad).
 - Para obtener fragmentos de código, que he integrado, adaptado y probado yo misma en el proyecto.
 - Para revisar mi código y resolver errores durante el desarrollo.
-- El CSS, y yo lo he revisado y ajustado.
+- El CSS y el código de los tests los ha generado la IA, y yo lo he revisado y ajustado.
