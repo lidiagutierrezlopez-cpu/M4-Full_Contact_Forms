@@ -6,7 +6,7 @@ export default function ListaReservas({ nombre }) {
     const { data, isPending, isError, error, isFetching, refetch } = useQuery({
         queryKey: ["reservas", nombre],
         queryFn: () => obtenerReservasDe(nombre),
-        enable: !!nombre,
+        enabled: !!nombre,
     });
 
     const queryClient = useQueryClient();
@@ -43,7 +43,9 @@ export default function ListaReservas({ nombre }) {
                     Reservas descartadas por datos incorrectos: {data.descartadas}
                 </p>
             )}
-            {cancelar.isError && <p role="alert" className="error-general">No se ha podido cancelar la reserva.</p>}
+            {cancelar.isError && (
+                <p role="alert" className="error-general">{cancelar.error.message}</p>
+            )}
             <ul>
                 {data.reservas.map((reserva) => (
                     <li key={reserva.id}>

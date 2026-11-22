@@ -2,10 +2,18 @@ import { esquemaReservaApi } from "../schemas/reserva";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+async function llamarApi(url, opciones) {
+    try {
+        return await fetch(url, opciones);
+    } catch {
+        throw new Error("No hay conexión con el servidor. Comprueba que la API está arrancada.");
+    }
+}
+
 async function pedirReservas(url) {
-    const respuesta = await fetch(url);
+    const respuesta = await llamarApi(url);
     if (!respuesta.ok) {
-        throw new Error("No se pudieron cargar las reservas");
+        throw new Error(`El servidor no ha podido cargar las reservas (error ${respuesta.status}).`);
     }
 
     const json = await respuesta.json();
@@ -38,23 +46,35 @@ export function obtenerReservasDe(nombre) {
 }
 
 export async function crearReserva(nueva) {
-    const respuesta = await fetch(`${API_URL}/reservas`, {
+    const respuesta = await llamarApi(`${API_URL}/reservas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nueva),
     });
 
     if (!respuesta.ok) {
-        throw new Error("No se pudo guardar la reserva");
+        throw new Error(`El servidor no ha podido guardar la reserva (error ${respuesta.status}).`);
     }
 
     const json = await respuesta.json();
-    return esquemaReservaApi.parse(json);
+    const resultado = esquemaReservaApi.safeParse(json);
+
+    if (!resultado.success) {
+        console.warn("La reserva se ha guardado, pero la respuesta no es válida:", json, resultado.error.issues);
+        return null;
+    }
+
+    return resultado.data;
 }
 
 export async function borrarReserva(id) {
-    const respuesta = await fetch(`${API_URL}/reservas/${id}`, { method: "DELETE" });
+    const respuesta = await llamarApi(`${API_URL}/reservas/${id}`, { method: "DELETE" });
+    
+    if (respuesta.status === 404) {
+        throw new Error("Esta reserva ya no existe. Puede que ya se hubiera cancelado.");
+    }
+
     if(!respuesta.ok) {
-        throw new Error("No se pudo cancelar la reserva");
+        throw new Error(`El servidor no ha podido cancelar la reserva (error ${respuesta.status}).`);
     }
 }

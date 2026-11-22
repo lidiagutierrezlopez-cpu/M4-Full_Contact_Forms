@@ -21,6 +21,12 @@ export const EXPOSICIONES = [
     },
 ];
 
+export const TIPOS = [
+    { id: "general", nombre: "General" },
+    { id: "reducida", nombre: "Reducida" },
+    { id: "grupo", nombre: "Grupo" },
+];
+
 export function nombreExposicion(id) {
     const expo = EXPOSICIONES.find((e) => e.id === id);
     return expo ? expo.nombre : id;

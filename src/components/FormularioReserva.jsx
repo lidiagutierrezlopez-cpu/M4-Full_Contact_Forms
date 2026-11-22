@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { esquemaReserva } from "../schemas/reserva";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { crearReserva, obtenerReservas } from "../services/reservas";
-import { EXPOSICIONES, PRECIOS } from "../datos/museo";
+import { EXPOSICIONES, PRECIOS, TIPOS } from "../datos/museo";
 import VentanaConfirmacion from "./VentanaConfirmacion";
 import { exposicionMasPopular } from "../utils/popularidad";
 
@@ -41,7 +41,12 @@ export default function FormularioReserva() {
         onSuccess: (reserva) => {
             queryClient.invalidateQueries({ queryKey: ["reservas"] });
             reset();
-            setMensaje(`Reserva ${reserva.id} confirmada. Puedes consultarla en "Mis reservas".`);
+            
+            if(reserva) {
+                setMensaje(`Reserva ${reserva.id} confirmada. Puedes consultarla en "Mis reservas".`);
+            } else{
+                setMensaje('Tu reserva se ha guardado, pero no hemos podido mostrar sus datos. Consúltala en "Mis reservas".');
+            }
         },
     });
 
@@ -84,7 +89,6 @@ export default function FormularioReserva() {
                     />
                     {errors.email && <p id="error-email" role="alert" className="error">{errors.email.message}</p>}
                 </div>
-
                 <div>
                     <label htmlFor="fecha">Fecha</label>
                     <input 
@@ -110,25 +114,21 @@ export default function FormularioReserva() {
                     {errors.entradas && <p id="error-entradas" role="alert" className="error">{errors.entradas.message}</p>}
                 </div>
 
+
                 <fieldset aria-describedby={errors.tipo ? "error-tipo" : undefined}>
                     <legend>Tipo de entrada</legend>
-                    <label>
-                        <input type="radio" value="general" aria-invalid={!!errors.tipo} {...register("tipo", {deps: ["entradas"]})} />
-                        General
-                    </label>
-                    <label>
-                        <input type="radio" value="reducida" aria-invalid={!!errors.tipo} {...register("tipo", {deps: ["entradas"]})} />
-                        Reducida
-                    </label>
-                    <label>
-                        <input type="radio" value="grupo" aria-invalid={!!errors.tipo} {...register("tipo", {deps: ["entradas"]})} />
-                        Grupo
-                    </label>
+                    {TIPOS.map((t) => (
+                        <label key={t.id}>
+                            <input type="radio" value={t.id} aria-invalid={!!errors.tipo} {...register("tipo", { deps: ["entradas"] })} />
+                            {t.nombre} ({PRECIOS[t.id]} € por entrada)
+                        </label>
+                    ))}
                     {errors.tipo && <p id="error-tipo" role="alert" className="error">{errors.tipo.message}</p>}
                 </fieldset>
 
-                <fieldset>
-                    <legend aria-describedby={errors.exposiciones ? "error-exposiciones" : undefined}>Exposiciones que quieres ver</legend>
+
+                <fieldset aria-describedby={errors.exposiciones ? "error-exposiciones" : undefined}>
+                    <legend>Exposiciones que quieres ver</legend>
                     {errorPopularidad && <p role="status" className="cargando">No se ha podido calcular la exposición más popular.</p>}
                     {EXPOSICIONES.map((expo) => (
                         <div key={expo.id} className="exposicion">
@@ -137,7 +137,6 @@ export default function FormularioReserva() {
                                     type="checkbox"
                                     value={expo.id}
                                     aria-invalid={!!errors.exposiciones}
-                                    aria-describedby={errors.exposiciones ? "error-exposiciones" : undefined}
                                     {...register("exposiciones")}
                                 />
                                 {expo.nombre}
@@ -168,6 +167,7 @@ export default function FormularioReserva() {
                     {errors.exposiciones && <p id="error-exposiciones" role="alert" className="error">{errors.exposiciones.message}</p>}
                 </fieldset>
                 
+
                 <div>
                     <label htmlFor="comentario">Comentario (opcional)</label>
                     <textarea 
@@ -178,7 +178,6 @@ export default function FormularioReserva() {
                     />
                     {errors.comentario && <p id="error-comentario" role="alert" className="error">{errors.comentario.message}</p>}
                 </div>
-
                 <div>
                     <label>
                         <input 
@@ -192,18 +191,20 @@ export default function FormularioReserva() {
                     {errors.normas && <p id="error-normas" role="alert" className="error">{errors.normas.message}</p>}
                 </div>
 
+
                 <p className="precio" aria-live="polite">
                     Total: {total.toLocaleString("es-ES", { style: "currency", currency: "EUR" })}
                 </p>
-
                 <button type="submit" disabled={mutacion.isPending}>
                     {mutacion.isPending ? "Reservando…" : "Reservar"}
                 </button>
+
                 {mensaje && <p role="status" className="ok">{mensaje}</p>}
-                {mutacion.isError
-                    && (<p role="alert" className="error-general">No se ha podido guardar la reserva. Inténtalo de nuevo.</p>)}
+                {mutacion.isError && (
+                    <p role="alert" className="error-general">{mutacion.error.message}</p>
+                )}
             </form>
-            {mutacion.isSuccess && (
+            {mutacion.isSuccess && mutacion.data && (
                 <VentanaConfirmacion reserva={mutacion.data} onCerrar={() => mutacion.reset()} onCancelada={() => setMensaje("La reserva se ha cancelado.")} />
             )}
         </>

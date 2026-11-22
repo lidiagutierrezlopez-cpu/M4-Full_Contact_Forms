@@ -8,6 +8,21 @@ const camposComunes = z.object({
     comentario: z.string().trim().max(200, "Máximo 200 caracteres")
 });
 
+const entradasValidas = z
+    .number({ error: "Escribe cuántas entradas quieres" })
+    .int("Tiene que ser un número entero")
+    .min(1, "Mínimo 1 entrada")
+    .max(10, "Máximo 10 entradas por reserva");
+
+function grupoConMinimo(datos) {
+    return datos.tipo !== "grupo" || datos.entradas >= 5;
+}
+
+const errorGrupo = {
+    error: "Las reservas de grupo son de 5 entradas o más",
+    path: ["entradas"],
+};
+
 const fechaVisita = z.string().superRefine((texto, ctx) => {
     if (!texto) {
         ctx.addIssue({ code: "custom", message: "Elige una fecha" });
@@ -36,20 +51,17 @@ export const esquemaReserva = camposComunes
     .extend({
         fecha: fechaVisita,
         entradas: z .coerce
-                    .number()
-                    .int("Tiene que ser un número entero")
-                    .min(1, "Mínimo 1 entrada")
-                    .max(10, "Máximo 10 entradas por reserva"),
+                    .number({ error: "Escribe cuántas entradas quieres" })
+                    .pipe(entradasValidas),
         normas: z.boolean().refine((valor) => valor === true, "Tienes que aceptar las normas del museo"),
     })
-    .refine((datos) => datos.tipo !== "grupo" || datos.entradas >=5, {
-        error: "Las reservas de grupo son de 5 entradas o más",
-        path: ["entradas"],
-});
+    .refine(grupoConMinimo, errorGrupo);
 
-export const esquemaReservaApi = camposComunes.extend({
-    id: z.string(),
-    fecha: z.string(),
-    entradas: z.number().int().min(1),
-    normas: z.boolean(), 
-});
+export const esquemaReservaApi = camposComunes
+    .extend({
+        id: z.string(),
+        fecha: z.string(),
+        entradas: entradasValidas,
+        normas: z.boolean(), 
+    })
+    .refine(grupoConMinimo, errorGrupo);

@@ -56,7 +56,9 @@ export default function VentanaConfirmacion({ reserva, onCerrar, onCancelada }) 
                 <dd>{total.toLocaleString("es-ES", { style: "currency", currency: "EUR" })}</dd>
             </dl>
 
-            {cancelar.isError && <p role="alert" className="error-general">No se ha podido cancelar la reserva.</p>}
+            {cancelar.isError && (
+                <p role="alert" className="error-general">{cancelar.error.message}</p>
+            )}
 
             <div className="acciones">
                 <button type="button" onClick={onCerrar}>Cerrar</button>
@@ -66,7 +68,7 @@ export default function VentanaConfirmacion({ reserva, onCerrar, onCancelada }) 
                     disabled={cancelar.isPending}
                     onClick={() => cancelar.mutate(reserva.id)}
                 >
-                    {cancelar.isPending ? "Cargando..." : "Cancelar reserva"}
+                    {cancelar.isPending ? "Cancelando..." : "Cancelar reserva"}
                 </button>
             </div>
         </dialog>

@@ -74,3 +74,15 @@ describe("esquemaReserva (formulario)", () => {
         expect(mensajes(resultado)).toContain("Las reservas de grupo son de 5 entradas o más");
     });
 });
+
+describe("reglas compartidas", () => {
+    it("la API también rechaza un grupo de 3 entradas", () => {
+        const resultado = esquemaReservaApi.safeParse({ ...reservaBuena, tipo: "grupo", entradas: 3 });
+        expect(mensajes(resultado)).toContain("Las reservas de grupo son de 5 entradas o más");
+    });
+
+    it("la API rechaza más de 10 entradas", () => {
+        const resultado = esquemaReservaApi.safeParse({ ...reservaBuena, entradas: 12 });
+        expect(mensajes(resultado)).toContain("Máximo 10 entradas por reserva");
+    });
+});

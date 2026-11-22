@@ -1,12 +1,17 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { esquemaAcceso } from "../schemas/acceso";
+import { useEffect } from "react";
 
 export default function FormularioAcceso({ onAcceder, onCancelar}) {
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors }, setFocus } = useForm({
         resolver: zodResolver(esquemaAcceso),
         defaultValues: { nombre: "" },
     });
+
+    useEffect(() => {
+        setFocus("nombre");
+    }, [setFocus]);
 
     function onSubmit(datos) {
         onAcceder(datos.nombre);
@@ -20,7 +25,6 @@ export default function FormularioAcceso({ onAcceder, onCancelar}) {
                     id="acceso-nombre"
                     type="text"
                     autoComplete="name"
-                    autoFocus
                     aria-invalid={!!errors.nombre}
                     aria-describedby={errors.nombre ? "error-acceso-nombre" : undefined}
                     {...register("nombre")}

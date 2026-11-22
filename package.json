@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "api": "json-server db.json"
+    "api": "json-server db.json",
+    "test": "vitest run"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.7",
