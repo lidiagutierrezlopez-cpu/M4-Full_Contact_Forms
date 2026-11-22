@@ -1,34 +1,45 @@
 import { z } from "zod";
 
+const camposComunes = z.object({
+    nombre: z.string().trim().min(2, "El nombre es demasiado corto"),
+    email: z.email("Introduce un email válido"),
+    tipo: z.enum(["general", "reducida", "grupo"], { error: "Elige un tipo de entrada" }),
+    exposiciones: z.array(z.string()).min(1, "Elige al menos una exposición"),
+    comentario: z.string().trim().max(200, "Máximo 200 caracteres")
+});
 
-function noEsPasada(texto) {
+const fechaVisita = z.string().superRefine((texto, ctx) => {
+    if (!texto) {
+        ctx.addIssue({ code: "custom", message: "Elige una fecha" });
+        return;
+    }
+
     const dia = new Date(texto + "T00:00");
+    if (Number.isNaN(dia.getTime())) {
+        ctx.addIssue({ code: "custom", message: "La fecha no es válida" });
+        return;
+    }
+
     const hoy = new Date();
     hoy.setHours(0,0,0,0);
-    return dia >= hoy;
-}
+    if (dia < hoy) {
+        ctx.addIssue({ code: "custom", message: "No puedes reservar en una fecha pasada" });
+        return;
+    }
 
-function noEsLunes(texto) {
-    const dia = new Date(texto + "T00:00");
-    return dia.getDay() !== 1;
-}
+    if (dia.getDay() === 1) {
+        ctx.addIssue({ code: "custom", message: "Los lunes el museo está cerrado" });
+    }
+});
 
-export const esquemaReserva = z
-    .object({
-        nombre: z.string().trim().min(2, "El nombre es demasiado corto"),
-        email: z.email("Introduce un email válido"),
-        fecha: z.string()
-                .min(1, "Elige una fecha")
-                .refine(noEsPasada, "No puedes reservar en una fecha pasada")
-                .refine(noEsLunes, "Los lunes el museo está cerrado"),
+export const esquemaReserva = camposComunes
+    .extend({
+        fecha: fechaVisita,
         entradas: z .coerce
                     .number()
                     .int("Tiene que ser un número entero")
                     .min(1, "Mínimo 1 entrada")
                     .max(10, "Máximo 10 entradas por reserva"),
-        tipo: z.enum(["general", "reducida", "grupo"]),
-        exposiciones: z.array(z.string()).min(1, "Elige al menos una exposición"),
-        comentario: z.string().trim().max(200, "Máximo 200 caracteres"),
         normas: z.boolean().refine((valor) => valor === true, "Tienes que aceptar las normas del museo"),
     })
     .refine((datos) => datos.tipo !== "grupo" || datos.entradas >=5, {
@@ -36,14 +47,9 @@ export const esquemaReserva = z
         path: ["entradas"],
 });
 
-export const esquemaReservaApi = z.object({
+export const esquemaReservaApi = camposComunes.extend({
     id: z.string(),
-    nombre: z.string(),
-    email: z.email(),
     fecha: z.string(),
     entradas: z.number().int().min(1),
-    tipo: z.enum(["general", "reducida", "grupo"]),
-    exposiciones: z.array(z.string()),
-    comentario: z.string(),
     normas: z.boolean(), 
 });

@@ -10,6 +10,7 @@ import { exposicionMasPopular } from "../utils/popularidad";
 
 export default function FormularioReserva() {
     const [infoAbierta, setInfoAbierta] = useState(null);
+    const [mensaje, setMensaje] = useState("");
 
     function alternarInfo(id) {
         setInfoAbierta(infoAbierta === id ? null : id);
@@ -37,13 +38,14 @@ export default function FormularioReserva() {
 
     const mutacion = useMutation({
         mutationFn: crearReserva,
-        onSuccess: () => {
+        onSuccess: (reserva) => {
             queryClient.invalidateQueries({ queryKey: ["reservas"] });
             reset();
+            setMensaje(`Reserva ${reserva.id} confirmada. Puedes consultarla en "Mis reservas".`);
         },
     });
 
-    const { data: todas } = useQuery({
+    const { data: todas, isError: errorPopularidad } = useQuery({
         queryKey: ["reservas"],
         queryFn: obtenerReservas,
     });
@@ -51,6 +53,7 @@ export default function FormularioReserva() {
     const popular = todas ? exposicionMasPopular(todas.reservas) : null;
     
     function onSubmit(datos) {
+        setMensaje("");
         mutacion.mutate(datos);
     }
 
@@ -107,24 +110,26 @@ export default function FormularioReserva() {
                     {errors.entradas && <p id="error-entradas" role="alert" className="error">{errors.entradas.message}</p>}
                 </div>
 
-                <fieldset>
+                <fieldset aria-describedby={errors.tipo ? "error-tipo" : undefined}>
                     <legend>Tipo de entrada</legend>
                     <label>
-                        <input type="radio" value="general" {...register("tipo", {deps: ["entradas"]})} />
+                        <input type="radio" value="general" aria-invalid={!!errors.tipo} {...register("tipo", {deps: ["entradas"]})} />
                         General
                     </label>
                     <label>
-                        <input type="radio" value="reducida" {...register("tipo", {deps: ["entradas"]})} />
+                        <input type="radio" value="reducida" aria-invalid={!!errors.tipo} {...register("tipo", {deps: ["entradas"]})} />
                         Reducida
                     </label>
                     <label>
-                        <input type="radio" value="grupo" {...register("tipo", {deps: ["entradas"]})} />
+                        <input type="radio" value="grupo" aria-invalid={!!errors.tipo} {...register("tipo", {deps: ["entradas"]})} />
                         Grupo
                     </label>
+                    {errors.tipo && <p id="error-tipo" role="alert" className="error">{errors.tipo.message}</p>}
                 </fieldset>
 
                 <fieldset>
-                    <legend>Exposiciones que quieres ver</legend>
+                    <legend aria-describedby={errors.exposiciones ? "error-exposiciones" : undefined}>Exposiciones que quieres ver</legend>
+                    {errorPopularidad && <p role="status" className="cargando">No se ha podido calcular la exposición más popular.</p>}
                     {EXPOSICIONES.map((expo) => (
                         <div key={expo.id} className="exposicion">
                             <label>
@@ -194,11 +199,12 @@ export default function FormularioReserva() {
                 <button type="submit" disabled={mutacion.isPending}>
                     {mutacion.isPending ? "Reservando…" : "Reservar"}
                 </button>
+                {mensaje && <p role="status" className="ok">{mensaje}</p>}
                 {mutacion.isError
                     && (<p role="alert" className="error-general">No se ha podido guardar la reserva. Inténtalo de nuevo.</p>)}
             </form>
             {mutacion.isSuccess && (
-                <VentanaConfirmacion reserva={mutacion.data} onCerrar={() => mutacion.reset()} />
+                <VentanaConfirmacion reserva={mutacion.data} onCerrar={() => mutacion.reset()} onCancelada={() => setMensaje("La reserva se ha cancelado.")} />
             )}
         </>
     );

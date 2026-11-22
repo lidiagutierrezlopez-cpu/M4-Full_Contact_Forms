@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { borrarReserva } from "../services/reservas";
 import { PRECIOS, nombreExposicion } from "../datos/museo";
 
-export default function VentanaConfirmacion({ reserva, onCerrar }) {
+export default function VentanaConfirmacion({ reserva, onCerrar, onCancelada }) {
     const dialogo = useRef(null);
 
     useEffect(() => {
@@ -18,6 +18,7 @@ export default function VentanaConfirmacion({ reserva, onCerrar }) {
         mutationFn: borrarReserva,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["reservas"] });
+            onCancelada();
             onCerrar();
         },
     });

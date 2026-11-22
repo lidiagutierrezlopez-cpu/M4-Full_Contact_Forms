@@ -48,7 +48,8 @@ export async function crearReserva(nueva) {
         throw new Error("No se pudo guardar la reserva");
     }
 
-    return respuesta.json();
+    const json = await respuesta.json();
+    return esquemaReservaApi.parse(json);
 }
 
 export async function borrarReserva(id) {

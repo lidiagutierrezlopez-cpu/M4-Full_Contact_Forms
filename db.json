@@ -27,22 +27,7 @@
         },
         {
             "nombre": "lidia",
-            "email": "lidia@gmail.com",
-            "fecha": "2026-11-27",
-            "entradas": 6,
-            "tipo": "reducida",
-            "exposiciones": [
-                "impresionismo",
-                "escultura",
-                "renacimiento"
-            ],
-            "comentario": "hola",
-            "normas": true,
-            "id": "R0wNAaSLDoQ"
-        },
-        {
-            "nombre": "lidia",
-            "email": "lidia@gmail.com",
+            "email": "lidia@ejemplo.com",
             "fecha": "2026-11-25",
             "entradas": 6,
             "tipo": "general",
@@ -52,19 +37,6 @@
             "comentario": "",
             "normas": true,
             "id": "Ewok8BWcEK8"
-        },
-        {
-            "nombre": "lidia",
-            "email": "lidia@gmail.com",
-            "fecha": "2026-11-21",
-            "entradas": 5,
-            "tipo": "general",
-            "exposiciones": [
-                "impresionismo"
-            ],
-            "comentario": "",
-            "normas": true,
-            "id": "VujyuJ1Ryg4"
         }
     ],
     "$schema": "./node_modules/json-server/schema.json"
